@@ -1,4 +1,4 @@
-package main
+package model
 
 type Domain struct {
 	Servers 			[]Server 	`json:"servers,omitempty"`

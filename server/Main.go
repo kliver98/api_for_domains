@@ -1,14 +1,14 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
 
-	app "github.com/kliver98/api_for_domains"
-	"github.com/kliver98/api_for_domains/database"
+	service "github.com/kliver98/api_for_domains/server/service"
 
 )
 
@@ -16,22 +16,22 @@ var API_BASE string = "/api/v1/"
 var GET_SERVERS string = API_BASE+"domain=:domain"
 var GET_SERVERS_SEARCHED string = API_BASE+"history"
 
-func initializeRepo(trc *zipkin.Tracer) (app.DomainDB,app.HistoryDB) {
-	var domain app.DomainDB
-	domain = newCockroachDomainRepository(trc)
-	var history app.DomainDB
-	history = newCockroachHistoryRepository(trc)
+func initializeServices(db *sql.DB) (*service.DomainService, *service.HistoryService) {
+	var domain service.DomainService
+	domain = newCockroachDomainService(db)
+	var history service.HistoryService
+	history = newCockroachHistoryService(db)
 	return domain, history
 }
 
-func newCockroachDomainRepository(trc *zipkin.Tracer, db *sql.DB) app.DomainRepository {
+func newCockroachDomainService(db *sql.DB) service.DomainService {
 
-	return database.NewDomainRepository(db, trc)
+	return service.NewDomainService(db)
 }
 
-func newCockroachHistoryRepository(trc *zipkin.Tracer, db *sql.DB) app.HistoryRepository {
+func newCockroachHistoryService(db *sql.DB) service.HistoryService {
 
-	return database.NewHistoryRepository(db, trc)
+	return service.NewHistoryService(db)
 }
 
 func main() { 

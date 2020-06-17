@@ -1,5 +1,6 @@
-package main
+package model
 
+//https://qualys-secure.force.com/discussions/s/article/000005828
 var SSL_GRADE = map[string]int{
 	"A+":0,
 	"A":1,

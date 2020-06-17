@@ -1,79 +1,64 @@
-package repository
+package database
 
 import (
-	"context"
 	"database/sql"
-	"errors"
-	"time"
+	"log"
 
-	_ "github.com/lib/pq"
-
-	repository "github.com/kliver98/api_for_domains/server/repository"
-	"github.com/openzipkin/zipkin-go"
+	database "../database"
 )
 
-type DomainRepository struct {
-	db     *sql.DB
-	tracer *zipkin.Tracer
+var DOMAIN_TABLE string = "domain"
+
+type IDomainRepository interface {
+	CreateDomain(d *database.DomainDB) error
+	FetchDomains() ([]database.DomainDB, error)
+	UpdateDomain(d database.DomainDB) error
 }
 
-// NewRepository creates a crockoach repository with the necessary dependencies
-func NewRepository(db *sql.DB, tracer *zipkin.Tracer) model.Repository {
-	return gopherRepository{db: db, tracer: tracer}
+type domainRepository struct {
+	db *sql.DB
 }
 
-func (r gopherRepository) CreateGopher(ctx context.Context, g *gopher.Gopher) error {
-	return errors.New("method not implemented")
+func NewDomainRepository(db *sql.DB) domainRepository {
+	return domainRepository{db: db}
 }
 
-func (r gopherRepository) FetchGophers(ctx context.Context) ([]gopher.Gopher, error) {
-	return nil, errors.New("method not implemented")
-}
-
-func (r gopherRepository) DeleteGopher(ctx context.Context, ID string) error {
-	return errors.New("method not implemented")
-}
-
-func (r gopherRepository) UpdateGopher(ctx context.Context, ID string, g gopher.Gopher) error {
-	return errors.New("method not implemented")
-}
-
-func (r gopherRepository) FetchGopherByID(ctx context.Context, ID string) (*gopher.Gopher, error) {
-	return nil, errors.New("method not implemented")
-}
-
-// Domain defines the properties of a domain to be listed
-type Domain struct {
-	Servers 			[]Server 	`json:"servers,omitempty"`
-	ServersChanged 		bool 		`json:"servers_changed,omitempty"`
-	SslGrade 			string 		`json:"ssl_grade,omitempty"`
-	PreviousSslGrade 	string 		`json:"previous_ssl_grade,omitempty"`
-	Logo 				string 		`json:"logo,omitempty"`
-	Title 				string 		`json:"title,omitempty"`
-	IsDown 				bool 		`json:"is_down,omitempty"`
-	CreatedAt 			*time.Time 	`json:"-"`
-}
-
-//Creates a new Domain
-func New(servers *[]Server, se bool, image string, age int) *Domain {
-	return &Domain{
-		ID:    ID,
-		Name:  name,
-		Image: image,
-		Age:   age,
+func (r domainRepository) CreateDomain(d *database.DomainDB) error {
+	sqlStm := `INSERT INTO `+DOMAIN_TABLE+` (name, sslgrade, previoussslgrade, searchedat) 
+	VALUES ($1, $2, $3, NOW())`
+	_, err := r.db.Exec(sqlStm, d.Name, d.SslGrade, d.PreviousSslGrade, d.SearchedAt)
+	if err != nil {
+		return err
 	}
+	return nil
 }
 
-//Repository provides access to the domain storage
-type Repository interface {
-	// CreateDomain saves a given domain
-	CreateDomain(ctx context.Context, domain *Domain) error
-	// FetchDomain return all domains saved in storage
-	FetchDomain(ctx context.Context) ([]Domain, error)
-	// DeleteDomain remove domains with given name
-	DeleteDomain(ctx context.Context, string name) error
-	// UpdateDomain modify domain with given name and given new data
-	UpdateDomain(ctx context.Context, name string, domain Domain) error
-	// FetchDomainByID returns the domain with given name identifier
-	//FetchDomainByID(ctx context.Context, name string) (*Domain, error)
+func (r domainRepository) FetchDomains() ([]database.DomainDB, error) {
+	sqlStm := `SELECT * FROM `+DOMAIN_TABLE
+	rows, err := r.db.Query(sqlStm)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var domains []database.DomainDB
+
+	for rows.Next() {
+		var d database.DomainDB
+		if err := rows.Scan(&d.Name, &d.SslGrade, &d.PreviousSslGrade, &d.SearchedAt); err != nil {
+			log.Println(err)
+			continue
+		}
+		domains = append(domains, d)
+	}
+	return domains, nil
 }
+
+func (r domainRepository) UpdateDomain(d database.DomainDB) error {
+	sqlStm := `UPDATE `+DOMAIN_TABLE+` SET SslGrade = ? , PreviousSslGrade = ? , SearchedAt = NOW() WHERE Name = ?`
+	_, err := r.db.Exec(sqlStm,d.SslGrade,d.PreviousSslGrade,d.Name)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
