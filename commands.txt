@@ -1,0 +1,26 @@
+For Windows:
+
+go get -d github.com/buaazp/fasthttprouter
+go get -d github.com/lib/pq
+cockroach start-single-node --insecure --listen-addr=localhost:26257 --http-addr=localhost:5001
+cockroach sql --insecure
+create database reto_prueba;
+create table history (
+			id INT PRIMARY KEY,
+			domain STRING(200) NOT NULL,
+			timestamptz TIMESTAMPTZ NOT NULL	
+);
+CREATE SEQUENCE id_prueba START 1 INCREMENT 1;
+INSERT INTO history (id,domain,timestamptz)
+VALUES (nextval('id_prueba'),'google.com',clock_timestamp());
+create table domain (
+			name STRING(200) PRIMARY KEY,
+			server_changed BOOLEAN NOT NULL,
+			ssl_grade NOT NULL	
+);
+go run Main.go Handler.go
+
+
+INFO...
+SSL GRADES - https://qualys-secure.force.com/discussions/s/article/000005828 ("A+","A","B","C","D","E","F")
+https://godoc.org/github.com/brimstone/golang-whois
