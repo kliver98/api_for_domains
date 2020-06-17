@@ -2,7 +2,6 @@ package service
 
 import (
 	"database/sql"
-
 	_ "github.com/lib/pq"
 
 	repository "../repository"
@@ -15,15 +14,15 @@ type IHistoryService interface {
 }
 
 
-func FetchHistories(db *sql.DB) (*model.History,error) { //Here formatted to just return domain names, not times
+func FetchHistory(db *sql.DB) (*model.History,error) { //Here formatted to just return domain names, not times
 	historyRepository := repository.NewHistoryRepository(db)
-	items, err := historyRepository.FetchHistories()
+	items, err := historyRepository.FetchHistory()
 	if err != nil {
 		return nil, err
 	}
 	var formattedItems []string
-	for _,i := range items {
-		formattedItems = append(formattedItems, i.Domain)
+	for _,v := range items {
+		formattedItems = append(formattedItems, v.Domain)
 	}
 	return &model.History{Items: formattedItems}, nil
 }

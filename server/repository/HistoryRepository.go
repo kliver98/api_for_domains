@@ -3,15 +3,14 @@ package database
 import (
 	"database/sql"
 	"log"
-
 	database "../database"
 )
 
-var HISTORY_TABLE string = "domain"
+var HISTORY_TABLE string = "history"
 
 type IHistoryRepository interface {
 	CreateHistory(h *database.HistoryDB) error
-	FetchHistories() ([]database.HistoryDB, error)
+	FetchHistory() ([]database.HistoryDB, error)
 }
 
 type historyRepository struct {
@@ -32,7 +31,7 @@ func (r historyRepository) CreateHistory(h *database.HistoryDB) error {
 	return nil
 }
 
-func (r historyRepository) FetchHistories() ([]database.HistoryDB, error) {
+func (r historyRepository) FetchHistory() ([]database.HistoryDB, error) {
 	sqlStm := `SELECT * FROM `+HISTORY_TABLE
 	rows, err := r.db.Query(sqlStm)
 	if err != nil {
@@ -40,7 +39,6 @@ func (r historyRepository) FetchHistories() ([]database.HistoryDB, error) {
 	}
 	defer rows.Close()
 	var domains []database.HistoryDB
-
 	for rows.Next() {
 		var h database.HistoryDB
 		if err := rows.Scan(&h.Domain, &h.SearchedAt); err != nil {
