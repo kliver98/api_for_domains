@@ -14,7 +14,6 @@ func Index(ctx *fasthttp.RequestCtx) {
 func (main *Main) getDomain(ctx *fasthttp.RequestCtx) {
 	param := ctx.UserValue("domain")
 	domain,_ := service.FetchDomain(main.db, fmt.Sprint(param))
-
 	jsonBody, err := json.Marshal(domain)
 
 	if err != nil {

@@ -9,9 +9,9 @@ import (
 var DOMAIN_TABLE string = "domain"
 
 type IDomainRepository interface {
-	CreateDomain(d *database.DomainDB) error
+	CreateDomain(domain string, sslGrade string, previouSsslGrade string) error
 	FetchDomain(domain string) (database.DomainDB, error)
-	UpdateDomain(d database.DomainDB) error
+	UpdateDomain(domain string, sslGrade string, previouSsslGrade string) error
 }
 
 type domainRepository struct {
@@ -22,10 +22,14 @@ func NewDomainRepository(db *sql.DB) domainRepository {
 	return domainRepository{db: db}
 }
 
-func (r domainRepository) CreateDomain(d *database.DomainDB) error {
-	sqlStm := `INSERT INTO `+DOMAIN_TABLE+` (name, sslgrade, previoussslgrade, searchedat) 
+func (r domainRepository) CreateDomain(domain string, sslGrade string, previousSslGrade string) error {
+	var d database.DomainDB
+	d.Name = domain
+	d.SslGrade = sslGrade
+	d.PreviousSslGrade = previousSslGrade
+	sqlStm := `INSERT INTO `+DOMAIN_TABLE+` (name, ssl_grade , previous_ssl_grade , searched_at ) 
 	VALUES ($1, $2, $3, NOW())`
-	_, err := r.db.Exec(sqlStm, d.Name, d.SslGrade, d.PreviousSslGrade, d.SearchedAt)
+	_, err := r.db.Exec(sqlStm, d.Name, d.SslGrade, d.PreviousSslGrade)
 	if err != nil {
 		return err
 	}
@@ -52,8 +56,12 @@ func (r domainRepository) FetchDomain(domain string) ([]database.DomainDB, error
 	return domains, nil
 }
 
-func (r domainRepository) UpdateDomain(d database.DomainDB) error {
-	sqlStm := `UPDATE `+DOMAIN_TABLE+` SET SslGrade = ? , PreviousSslGrade = ? , SearchedAt = NOW() WHERE Name = ?`
+func (r domainRepository) UpdateDomain(domain string, sslGrade string, previouSsslGrade string) error {
+	var d database.DomainDB
+	d.Name = domain
+	d.SslGrade = sslGrade
+	d.PreviousSslGrade = previouSsslGrade
+	sqlStm := `UPDATE `+DOMAIN_TABLE+` SET ssl_grade = $1 , previous_ssl_grade = $2 , searched_at = NOW() WHERE Name = $3`
 	_, err := r.db.Exec(sqlStm,d.SslGrade,d.PreviousSslGrade,d.Name)
 	if err != nil {
 		return err

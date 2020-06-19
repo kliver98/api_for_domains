@@ -4,9 +4,10 @@ import (
 	"database/sql"
 	"net/http"
 	"io/ioutil"
-	"time"
 	"log"
+	"time"
 	"strings"
+	"strconv"
 	"encoding/json"
 	_ "github.com/lib/pq"
 	"github.com/badoux/goscraper"
@@ -17,6 +18,7 @@ import (
 )
 
 const SSL_LABS_URL = "https://api.ssllabs.com/api/v3/analyze?host="
+const HTTP = "http://"
 
 type IDomainService interface {
 	FetchDomain(db *sql.DB, domain string) (*model.Domain, error)
@@ -32,32 +34,50 @@ type ServerAPI struct {
 	Grade     string `json:"grade,omitempty"`
 }
 
-func FetchDomain(db *sql.DB, domain string) (*model.Domain, error) { //Here formatted to just return domain names, not times
+func FetchDomain(db *sql.DB, domain string) (model.Domain, error) { //Here formatted to just return domain names, not times
 	domainRepository := repository.NewDomainRepository(db)
 	//Put into history the domain searched. No matter if found coincidences or not. It's a history of searches
 	historyRepository := repository.NewHistoryRepository(db)
 	historyRepository.CreateHistory(domain)
 	//Looks if the domain already exits, if not domainDB will be nil
 	domainsDB,_ := domainRepository.FetchDomain(domain) //domainDb its array class of database -> []DomainDB
-	domainModel := &model.Domain{}
+	var domainModel model.Domain
 	servers := getServers(domain)
 	sslGrade := getMinorSslGrade(servers)
-	isDown := isDown(domain)
+	isDown := strconv.FormatBool(isDown(domain))
 	logo, title := getLogoAndTitle(domain)
 	if len(domainsDB)==0 { //No exist domain stored into database, not searched before
-		domainModel.ServersChanged = false
+		domainModel.ServersChanged = strconv.FormatBool(false)
 		domainModel.PreviousSslGrade = sslGrade
+		domainRepository.CreateDomain(domain,sslGrade,sslGrade) //Put domain into database for 1 time
 	} else { //Exist into database
-		domainModel.PreviousSslGrade = domainsDB[0].SslGrade
-		domainModel.ServersChanged = domainModel.PreviousSslGrade!=sslGrade //Not sure, assuming
+		c := moreThan(domainsDB[0].SearchedAt,0)
+		if c {
+			domainModel.ServersChanged = strconv.FormatBool(domainsDB[0].PreviousSslGrade!=sslGrade) //Not sure, assuming
+			domainModel.PreviousSslGrade = domainsDB[0].SslGrade
+		} else {
+			domainModel.ServersChanged = strconv.FormatBool(false) //Not sure, assuming
+			domainModel.PreviousSslGrade = sslGrade
+		}
+		domainRepository.UpdateDomain(domain,sslGrade,domainModel.PreviousSslGrade) //Updates domain into database
 	}
 	domainModel.Servers = servers
 	domainModel.IsDown = isDown
 	domainModel.Title = title
 	domainModel.Logo = logo
 	domainModel.SslGrade = sslGrade
-
 	return domainModel, nil
+}
+
+func moreThan(compare *time.Time, hours int) bool {
+	loc, _ := time.LoadLocation("UTC")
+	today := time.Now().In(loc)
+	comparator := compare.Add(time.Duration(hours) * time.Hour)
+	if today.Before(comparator) {
+		return false
+	} else {
+		return true
+	}
 }
 
 func getDataFromHostAPI(domain string) HostAPI {
@@ -85,12 +105,21 @@ func getCountryAndOwner(domain string) (string,string) {
 	}
 	var owner, country string
 	dataOwner := (strings.Split(result, "OrgName:"))
+	if len(dataOwner)<2 {
+		dataOwner = (strings.Split(result, "org-name:"))
+	}
 	dataCountry := (strings.Split(result, "Country:"))
-
-	dataOwner = (strings.Split(dataOwner[1], "\n"))
+	if len(dataCountry)<2 {
+		dataCountry = (strings.Split(result, "country:"))
+	}
+	if len(dataOwner)>1 {
+		dataOwner = (strings.Split(dataOwner[1], "\n"))
+	}
 	owner = strings.Trim(dataOwner[0], " ")
 
-	dataCountry = strings.Split(dataCountry[1], "\n")
+	if len(dataCountry)>1 {
+		dataCountry = strings.Split(dataCountry[1], "\n")
+	}
 	country = strings.Trim(dataCountry[0], " ")
 
 	return country,owner
@@ -129,19 +158,15 @@ func getMinorSslGrade(servers []model.Server) string {
 }
 
 func getLogoAndTitle(domain string) (string,string) {
-	s, err := goscraper.Scrape(domain, 5)
+	s, err := goscraper.Scrape(HTTP+domain, 5)
 	if err != nil {
 		return "", ""
 	}
-	return s.Preview.Title, s.Preview.Icon
+	return s.Preview.Icon,s.Preview.Title
 }
 
 func isDown(domain string) bool {
-	timeout := time.Duration(1 * time.Second)
-	client := http.Client{
-	    Timeout: timeout,
-	}
-	_, err := client.Get("http://"+domain)
+	_, err := http.Get(HTTP+domain)
 	if err != nil {
 	    return true
 	} else {
