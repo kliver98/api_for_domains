@@ -3,17 +3,37 @@ package main
 import (
 	"fmt"
 	"github.com/valyala/fasthttp"
+	"encoding/json"
+	service "./service"
 )
 
 func Index(ctx *fasthttp.RequestCtx) {
-	fmt.Fprint(ctx, "Created by Kliver Daniel Girón\n\n	>>>	"+GET_SERVERS+"\n	>>>	"+GET_SERVERS_SEARCHED)
+	fmt.Fprint(ctx, "Created by Kliver Daniel Girón\n\n	>>>	"+GET_DOMAIN+"\n	>>>	"+GET_HISTORY)
 }
 
-func GetServers(ctx *fasthttp.RequestCtx) {
-	domain := ctx.UserValue("domain")
-	fmt.Fprintf(ctx, "Searching for domain: , %s!\n", domain)
+func (main *Main) getDomain(ctx *fasthttp.RequestCtx) {
+	param := ctx.UserValue("domain")
+	domain,_ := service.FetchDomain(main.db, fmt.Sprint(param))
+
+	jsonBody, err := json.Marshal(domain)
+
+	if err != nil {
+		ctx.Error(" json marshal fail", 500)
+		return
+	}
+
+	ctx.Response.SetBody(jsonBody)
 }
 
-func GetServersSearched(ctx *fasthttp.RequestCtx) {
-	fmt.Fprintf(ctx, "Searching for history")
+func (main *Main) getHistory(ctx *fasthttp.RequestCtx) {
+	history,_ := service.FetchHistory(main.db)
+
+	jsonBody, err := json.Marshal(history)
+
+	if err != nil {
+		ctx.Error(" json marshal fail", 500)
+		return
+	}
+
+	ctx.Response.SetBody(jsonBody)
 }

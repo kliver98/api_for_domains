@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"log"
-
 	database "../database"
 )
 
@@ -11,7 +10,7 @@ var DOMAIN_TABLE string = "domain"
 
 type IDomainRepository interface {
 	CreateDomain(d *database.DomainDB) error
-	FetchDomains() ([]database.DomainDB, error)
+	FetchDomain(domain string) (database.DomainDB, error)
 	UpdateDomain(d database.DomainDB) error
 }
 
@@ -33,11 +32,11 @@ func (r domainRepository) CreateDomain(d *database.DomainDB) error {
 	return nil
 }
 
-func (r domainRepository) FetchDomains() ([]database.DomainDB, error) {
-	sqlStm := `SELECT * FROM `+DOMAIN_TABLE
+func (r domainRepository) FetchDomain(domain string) ([]database.DomainDB, error) {
+	sqlStm := `SELECT * FROM `+DOMAIN_TABLE+` WHERE name='`+domain+`'`
 	rows, err := r.db.Query(sqlStm)
 	if err != nil {
-		return nil, err
+		return *&[]database.DomainDB{}, err
 	}
 	defer rows.Close()
 	var domains []database.DomainDB

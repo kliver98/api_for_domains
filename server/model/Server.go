@@ -10,6 +10,8 @@ var SSL_GRADE = map[string]int{
 	"E":5,
 	"F":6,
 }
+const MAX_SSL_GRADE = "A+"
+const MIN_SSL_GRADE = "F"
 
 type Server struct {
 	Address 	string 	`json:"address,omitempty"`

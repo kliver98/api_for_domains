@@ -21,10 +21,10 @@ func NewHistoryRepository(db *sql.DB) historyRepository {
 	return historyRepository{db: db}
 }
 
-func (r historyRepository) CreateHistory(h *database.HistoryDB) error {
+func (r historyRepository) CreateHistory(newDomain string) error {
 	sqlStm := `INSERT INTO `+HISTORY_TABLE+` (domain, searched_at) 
 	VALUES ($1, NOW())`
-	_, err := r.db.Exec(sqlStm, h.Domain, h.SearchedAt)
+	_, err := r.db.Exec(sqlStm, newDomain)
 	if err != nil {
 		return err
 	}
