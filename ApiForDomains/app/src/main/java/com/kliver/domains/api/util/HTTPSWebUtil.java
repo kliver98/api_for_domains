@@ -25,7 +25,6 @@ public class HTTPSWebUtil {
         try {
             URL page = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) page.openConnection();
-            //connection.setRequestMethod("GET");
             InputStream is = connection.getInputStream();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             byte[] buffer = new byte[4096];
