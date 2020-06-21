@@ -1,13 +1,12 @@
 package com.kliver.domains.api.view;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-
 import com.kliver.domains.api.R;
 import com.kliver.domains.api.control.MainController;
+import com.kliver.domains.api.util.Constants;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,4 +41,5 @@ public class MainActivity extends AppCompatActivity {
     public Button getBtnHistory() {
         return btnHistory;
     }
+
 }

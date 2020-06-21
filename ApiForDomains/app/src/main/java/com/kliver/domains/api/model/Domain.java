@@ -1,6 +1,7 @@
 package com.kliver.domains.api.model;
 
 public class Domain {
+
     private Server []servers;
     private String serversChanged;
     private String sslGrade;

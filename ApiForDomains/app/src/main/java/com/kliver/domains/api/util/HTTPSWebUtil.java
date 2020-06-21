@@ -4,12 +4,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
-
 
 public class HTTPSWebUtil {
 
     private OnResponseListener listener;
+
 
     public HTTPSWebUtil() {}
 
@@ -25,6 +26,7 @@ public class HTTPSWebUtil {
         try {
             URL page = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) page.openConnection();
+            connection.setConnectTimeout(Constants.TIMEOUT_HTTP_URL_CONNECTION);
             InputStream is = connection.getInputStream();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             byte[] buffer = new byte[4096];
@@ -37,6 +39,8 @@ public class HTTPSWebUtil {
             connection.disconnect();
             String response = new String(baos.toByteArray(), "UTF-8");
             if (listener != null) listener.onResponse(callbackID, response);
+        }catch (SocketTimeoutException ex) {
+            if (listener != null) listener.onResponse(callbackID, Constants.CONNECTION_TIMEOUT_RESPONSE);
         }catch (IOException ex){
             ex.printStackTrace();
         }

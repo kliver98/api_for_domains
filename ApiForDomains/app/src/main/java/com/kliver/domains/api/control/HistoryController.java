@@ -7,7 +7,6 @@ import com.kliver.domains.api.model.History;
 import com.kliver.domains.api.util.Constants;
 import com.kliver.domains.api.util.HTTPSWebUtil;
 import com.kliver.domains.api.view.HistoryActivity;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,7 +58,10 @@ public class HistoryController implements View.OnClickListener, HTTPSWebUtil.OnR
                 try {
                     tmpDATA = Arrays.asList(gson.fromJson(response, History.class).getItems());
                 } catch (Exception e) {
-                    tmpDATA = Arrays.asList(new String[]{" >> No hay datos para mostrar."});
+                    if (response.equals("{}"))
+                        tmpDATA = Arrays.asList(new String[]{Constants.NO_DATA});
+                    else
+                        tmpDATA = Arrays.asList(new String[]{"Error: "+response});
                 }
                 String[] data = new String[tmpDATA.size()];
                 for (int i = 0; i < tmpDATA.size(); i++) {

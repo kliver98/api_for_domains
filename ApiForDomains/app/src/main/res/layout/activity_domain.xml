@@ -1,9 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.DomainActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#c0ccda"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/backArrowIV"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:srcCompat="@drawable/ic_arrow_back" />
+
+        <TextView
+            android:id="@+id/informationTV"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="Busqueda de dominio"
+            android:textColor="#FFFFFF"
+            android:textSize="30sp" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#c0ccda"
+        android:paddingStart="20dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"
+        android:visibility="visible">
+
+        <EditText
+            android:id="@+id/searchBarET"
+            android:layout_width="310dp"
+            android:layout_height="wrap_content"
+            android:hint="Dominio..."
+            android:inputType="text"
+            android:textSize="22dp" />
+
+        <ImageView
+            android:id="@+id/searchImgIV"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerInParent="true"
+            android:layout_toEndOf="@+id/searchBarET"
+            android:foreground="@drawable/ic_search"
+            android:padding="2dp"
+            android:visibility="visible" />
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/auxLL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/basicInfoLL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/logoIV"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginStart="135dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:srcCompat="@drawable/ic_launcher_foreground" />
+
+            <TextView
+                android:id="@+id/sslGradeTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Grado SSL: "
+                android:textAlignment="center"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/previousSslGradeTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Grado SSL Previo: "
+                android:textAlignment="center"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/serversChangedTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Los servidores han cambiado: "
+                android:textAlignment="center"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/isDownTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="El servidor esta caido: "
+                android:textAlignment="center"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/serversRV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="5dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>
