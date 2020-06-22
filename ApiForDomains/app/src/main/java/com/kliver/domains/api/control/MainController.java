@@ -1,7 +1,5 @@
 package com.kliver.domains.api.control;
 
-import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -64,8 +62,8 @@ public class MainController implements View.OnClickListener, HTTPSWebUtil.OnResp
                                 Toast.makeText(activity,"Error: "+response,Toast.LENGTH_LONG).show();
                             }
                     );
-                }
-                else
+                    apiAlive = false;
+                } else
                     apiAlive = true;
                 break;
         }

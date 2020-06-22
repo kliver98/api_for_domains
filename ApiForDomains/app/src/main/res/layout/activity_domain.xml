@@ -112,9 +112,20 @@
                 android:id="@+id/isDownTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="El servidor esta caido: "
+                android:text="Está caído el servidor: "
                 android:textAlignment="center"
                 android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/infoServersTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:text="Servidores: "
+                android:textAlignment="textStart"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 

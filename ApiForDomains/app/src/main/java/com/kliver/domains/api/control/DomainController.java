@@ -24,8 +24,9 @@ public class DomainController implements View.OnClickListener, HTTPSWebUtil.OnRe
 
     public DomainController(DomainActivity activity) {
         this.activity = activity;
-        domain = activity.getIntent().getExtras()==null ?
-                null:activity.getIntent().getExtras().getString(Constants.DOMAIN_VAR_INTENT);
+        if (activity.getIntent().getExtras()!=null) {
+            activity.getSearchBarET().setText(activity.getIntent().getExtras().getString(Constants.DOMAIN_VAR_INTENT));
+        }
         util = new HTTPSWebUtil();
         util.setListener(this);
         initializeFileds();
@@ -46,7 +47,8 @@ public class DomainController implements View.OnClickListener, HTTPSWebUtil.OnRe
     }
 
     private void initializeFileds() {
-        if (domain==null || domain.trim().equals(""))
+        domain = activity.getSearchBarET().getText().toString().trim();
+        if (domain.trim().equals(""))
             return;
 
         activity.getSearchBarET().setText(domain);
@@ -95,11 +97,12 @@ public class DomainController implements View.OnClickListener, HTTPSWebUtil.OnRe
                 activity.runOnUiThread(
                         () -> {
                             Picasso.get().load(domainResponse.getLogo()).into(activity.getLogoIV());
-                            activity.getSslGradeTV().setText(domainResponse.getSslGrade());
-                            activity.getPreviousSslGradeTV().setText(domainResponse.getPreviousSslGrade());
-                            activity.getServersChangedTV().setText(domainResponse.getServersChanged());
-                            activity.getIsDownTV().setText(domainResponse.getIsDown());
+                            activity.getSslGradeTV().setText("Grado SSL: "+domainResponse.getSsl_grade());
+                            activity.getPreviousSslGradeTV().setText("Grado SSL Previo: "+domainResponse.getPrevious_ssl_grade());
+                            activity.getServersChangedTV().setText("Los servidores han cmabiado: "+domainResponse.getServers_changed());
+                            activity.getIsDownTV().setText("Está caído el servidor: "+domainResponse.getIs_down());
                             List<Server> servers = activity.getServers();
+                            servers.clear();
                             for (Server s:domainResponse.getServers()) {
                                 servers.add(s);
                             }

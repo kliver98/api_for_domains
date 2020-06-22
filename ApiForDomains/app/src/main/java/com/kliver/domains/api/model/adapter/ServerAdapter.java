@@ -32,10 +32,10 @@ public class ServerAdapter extends RecyclerView.Adapter<ServerAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderServer holder, int position) {
-        holder.getAddressTV().setText(servers.get(position).getAddress());
-        holder.getSslGradeTV().setText(servers.get(position).getSslGrade());
-        holder.getCountryTV().setText(servers.get(position).getCountry());
-        holder.getOwnerTV().setText(servers.get(position).getOwner());
+        holder.getAddressTV().setText("IP: "+servers.get(position).getAddress());
+        holder.getSslGradeTV().setText("Grado SSL: "+servers.get(position).getSsl_grade());
+        holder.getCountryTV().setText("País: "+servers.get(position).getCountry());
+        holder.getOwnerTV().setText("Dueño: "+servers.get(position).getOwner());
     }
 
     @Override

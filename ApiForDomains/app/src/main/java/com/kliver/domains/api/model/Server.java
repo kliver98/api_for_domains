@@ -3,7 +3,7 @@ package com.kliver.domains.api.model;
 public class Server {
 
     private String address;
-    private String sslGrade;
+    private String ssl_grade;
     private String country;
     private String owner;
 
@@ -11,7 +11,7 @@ public class Server {
 
     public Server(String address, String sslGrade, String country, String owner) {
         this.address = address;
-        this.sslGrade = sslGrade;
+        this.ssl_grade = sslGrade;
         this.country = country;
         this.owner = owner;
     }
@@ -24,12 +24,12 @@ public class Server {
         this.address = address;
     }
 
-    public String getSslGrade() {
-        return sslGrade;
+    public String getSsl_grade() {
+        return ssl_grade;
     }
 
-    public void setSslGrade(String sslGrade) {
-        this.sslGrade = sslGrade;
+    public void setSsl_grade(String sslGrade) {
+        this.ssl_grade = sslGrade;
     }
 
     public String getCountry() {

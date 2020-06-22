@@ -71,6 +71,7 @@ public class HistoryController implements View.OnClickListener, HTTPSWebUtil.OnR
                 history.setItems(data);
                 activity.runOnUiThread(
                         () -> {
+                            activity.getItems().clear();
                             for (String item:history.getItems()) {
                                 activity.getItems().add(item);
                             }
