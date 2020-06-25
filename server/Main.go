@@ -27,11 +27,11 @@ func (main *Main) Router() *fasthttprouter.Router {
 }
 
 func Init() *Main {
-	db,err := database.GetConnection()
+	db,_ := database.GetConnection()
 
-	if err!=nil { //If does not connect with database continuing the flow execution have no meaning
-		panic(err.Error())
-	}
+	//if err!=nil { //If does not connect with database continuing the flow execution have no meaning
+	//	panic(err.Error())
+	//}
 
 	main := &Main{}
 	router := fasthttprouter.New()

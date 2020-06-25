@@ -18,7 +18,7 @@ func FetchHistory(db *sql.DB) (*model.History,error) { //Here formatted to just 
 	historyRepository := repository.NewHistoryRepository(db)
 	items, err := historyRepository.FetchHistory()
 	if err != nil {
-		return nil, err
+		return &model.History{Error: model.Error{Type:"-", Message:err.Error(), Code:"-"}}, err
 	}
 	var formattedItems []string
 	for _,v := range items {
