@@ -1,8 +1,8 @@
 # api_for_domains
 
-## Stpes to run server in windows:
+## Steps to run server in windows:
 
-1. must have installed CockroachDB and go
+1. must have installed CockroachDB and golang
 2. run on cmd console:
   
  > go get -d github.com/buaazp/fasthttprouter <br>
