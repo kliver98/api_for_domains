@@ -13,6 +13,7 @@ var SSL_GRADE = map[string]int{
 const MAX_SSL_GRADE = "A+"
 const MIN_SSL_GRADE = "F"
 
+//Struct that represents a Server Object for json response of API
 type Server struct {
 	Address 	string 	`json:"address,omitempty"`
 	SslGrade 	string 	`json:"ssl_grade,omitempty"`

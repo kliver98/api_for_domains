@@ -1,5 +1,6 @@
 package model
 
+//Struct that represents a Domain Object for json response of API
 type Domain struct {
 	Servers 			[]Server 	`json:"servers,omitempty"`
 	ServersChanged 		string 		`json:"servers_changed,omitempty"`

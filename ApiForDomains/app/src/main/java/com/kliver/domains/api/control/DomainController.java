@@ -99,7 +99,7 @@ public class DomainController implements View.OnClickListener, HTTPSWebUtil.OnRe
                             Picasso.get().load(domainResponse.getLogo()).into(activity.getLogoIV());
                             activity.getSslGradeTV().setText("Grado SSL: "+domainResponse.getSsl_grade());
                             activity.getPreviousSslGradeTV().setText("Grado SSL Previo: "+domainResponse.getPrevious_ssl_grade());
-                            activity.getServersChangedTV().setText("Los servidores han cmabiado: "+domainResponse.getServers_changed());
+                            activity.getServersChangedTV().setText("Los servidores han cambiado: "+domainResponse.getServers_changed());
                             activity.getIsDownTV().setText("Está caído el servidor: "+domainResponse.getIs_down());
                             List<Server> servers = activity.getServers();
                             servers.clear();

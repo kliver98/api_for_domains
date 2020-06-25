@@ -27,13 +27,18 @@ func (main *Main) Router() *fasthttprouter.Router {
 }
 
 func Init() *Main {
+	db,err := database.GetConnection()
+
+	if err!=nil { //If does not connect with database continuing the flow execution have no meaning
+		panic(err.Error())
+	}
+
 	main := &Main{}
 	router := fasthttprouter.New()
 	router.GET("/", Index)
 	router.GET(GET_DOMAIN, main.getDomain)
 	router.GET(GET_HISTORY, main.getHistory)
 
-	db,_ := database.GetConnection()
 	main.router = router
 	main.db = db
 

@@ -2,12 +2,14 @@ package database
 
 import (
 	"database/sql"
-	"log"
+
 	database "../database"
+	errors "../errors"
 )
 
 var HISTORY_TABLE string = "history"
 
+//Methods that must have HistoryRepository
 type IHistoryRepository interface {
 	CreateHistory(h *database.HistoryDB) error
 	FetchHistory() ([]database.HistoryDB, error)
@@ -26,7 +28,7 @@ func (r historyRepository) CreateHistory(newDomain string) error {
 	VALUES ($1, NOW())`
 	_, err := r.db.Exec(sqlStm, newDomain)
 	if err != nil {
-		return err
+		return &errors.ExecError{Message: "Execution error "+sqlStm+":"+newDomain}
 	}
 	return nil
 }
@@ -34,15 +36,18 @@ func (r historyRepository) CreateHistory(newDomain string) error {
 func (r historyRepository) FetchHistory() ([]database.HistoryDB, error) {
 	sqlStm := `SELECT * FROM `+HISTORY_TABLE
 	rows, err := r.db.Query(sqlStm)
+
 	if err != nil {
-		return nil, err
+		return nil, &errors.QueryError{Message: err.Error()}
 	}
+
 	defer rows.Close()
 	var domains []database.HistoryDB
 	for rows.Next() {
 		var h database.HistoryDB
 		if err := rows.Scan(&h.Domain, &h.SearchedAt); err != nil {
-			log.Println(err)
+			e := &errors.ReadError{}
+			h.Domain = e.Error()
 			continue
 		}
 		domains = append(domains, h)

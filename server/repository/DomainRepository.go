@@ -2,27 +2,29 @@ package database
 
 import (
 	"database/sql"
-	"log"
+
 	database "../database"
+	errors "../errors"
 )
 
 var DOMAIN_TABLE string = "domain"
 
+//Methods that must have DomainRepository
 type IDomainRepository interface {
 	CreateDomain(domain string, sslGrade string, previouSsslGrade string) error
 	FetchDomain(domain string) (database.DomainDB, error)
 	UpdateDomain(domain string, sslGrade string, previouSsslGrade string) error
 }
 
-type domainRepository struct {
+type DomainRepository struct {
 	db *sql.DB
 }
 
-func NewDomainRepository(db *sql.DB) domainRepository {
-	return domainRepository{db: db}
+func NewDomainRepository(db *sql.DB) DomainRepository {
+	return DomainRepository{db: db}
 }
 
-func (r domainRepository) CreateDomain(domain string, sslGrade string, previousSslGrade string) error {
+func (r DomainRepository) CreateDomain(domain string, sslGrade string, previousSslGrade string) error {
 	var d database.DomainDB
 	d.Name = domain
 	d.SslGrade = sslGrade
@@ -31,16 +33,16 @@ func (r domainRepository) CreateDomain(domain string, sslGrade string, previousS
 	VALUES ($1, $2, $3, NOW())`
 	_, err := r.db.Exec(sqlStm, d.Name, d.SslGrade, d.PreviousSslGrade)
 	if err != nil {
-		return err
+		return &errors.ExecError{Message: err.Error()+" \n Execution error "+sqlStm+":"+domain+","+sslGrade+","+previousSslGrade}
 	}
 	return nil
 }
 
-func (r domainRepository) FetchDomain(domain string) ([]database.DomainDB, error) {
+func (r DomainRepository) FetchDomain(domain string) ([]database.DomainDB, error) {
 	sqlStm := `SELECT * FROM `+DOMAIN_TABLE+` WHERE name='`+domain+`'`
 	rows, err := r.db.Query(sqlStm)
 	if err != nil {
-		return *&[]database.DomainDB{}, err
+		return *&[]database.DomainDB{}, &errors.QueryError{Message: "A Query error has ocurred "+err.Error()}
 	}
 	defer rows.Close()
 	var domains []database.DomainDB
@@ -48,7 +50,8 @@ func (r domainRepository) FetchDomain(domain string) ([]database.DomainDB, error
 	for rows.Next() {
 		var d database.DomainDB
 		if err := rows.Scan(&d.Name, &d.SslGrade, &d.PreviousSslGrade, &d.SearchedAt); err != nil {
-			log.Println(err)
+			e := &errors.ReadError{"Reading error, possible loss of data"}
+			d.Name = e.Error()
 			continue
 		}
 		domains = append(domains, d)
@@ -56,15 +59,15 @@ func (r domainRepository) FetchDomain(domain string) ([]database.DomainDB, error
 	return domains, nil
 }
 
-func (r domainRepository) UpdateDomain(domain string, sslGrade string, previouSsslGrade string) error {
+func (r DomainRepository) UpdateDomain(domain string, sslGrade string, previousSslGrade string) error {
 	var d database.DomainDB
 	d.Name = domain
 	d.SslGrade = sslGrade
-	d.PreviousSslGrade = previouSsslGrade
+	d.PreviousSslGrade = previousSslGrade
 	sqlStm := `UPDATE `+DOMAIN_TABLE+` SET ssl_grade = $1 , previous_ssl_grade = $2 , searched_at = NOW() WHERE Name = $3`
 	_, err := r.db.Exec(sqlStm,d.SslGrade,d.PreviousSslGrade,d.Name)
 	if err != nil {
-		return err
+		return &errors.ExecError{Message: err.Error()+" \n Execution error "+sqlStm+":"+domain+","+sslGrade+","+previousSslGrade}
 	}
 	return nil
 }

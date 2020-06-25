@@ -59,7 +59,7 @@ public class MainController implements View.OnClickListener, HTTPSWebUtil.OnResp
                 if (response.equals(Constants.CONNECTION_TIMEOUT_RESPONSE)) {
                     activity.runOnUiThread(
                             () -> {
-                                Toast.makeText(activity,"Error: "+response,Toast.LENGTH_LONG).show();
+                                Toast.makeText(activity,"Error: "+response,Toast.LENGTH_SHORT).show();
                             }
                     );
                     apiAlive = false;
