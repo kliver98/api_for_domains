@@ -47,7 +47,7 @@ public class DomainController implements View.OnClickListener, HTTPSWebUtil.OnRe
     }
 
     private void initializeFileds() {
-        domain = activity.getSearchBarET().getText().toString().trim();
+        domain = activity.getSearchBarET().getText().toString().trim().toLowerCase();
         if (domain.trim().equals(""))
             return;
 

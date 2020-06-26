@@ -26,5 +26,6 @@ go run Main.go Handler.go
 INFO...
 SSL GRADES - https://qualys-secure.force.com/discussions/s/article/000005828 ("A+","A","B","C","D","E","F")
 https://godoc.org/github.com/brimstone/golang-whois
+https://developer.mozilla.org/es/docs/Web/HTTP/Status
 
 react y redux -> proyecto

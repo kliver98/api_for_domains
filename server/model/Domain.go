@@ -9,4 +9,5 @@ type Domain struct {
 	Logo 				string 		`json:"logo,omitempty"`
 	Title 				string 		`json:"title,omitempty"`
 	IsDown 				string 		`json:"is_down,omitempty"`
+	Error 				Error 		`json:"error,omitempty"`
 }

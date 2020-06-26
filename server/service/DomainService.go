@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"net/http"
 	"io/ioutil"
-	"log"
 	"time"
 	"strings"
 	"strconv"
@@ -70,7 +69,10 @@ func FetchDomain(db *sql.DB, domain string) (model.Domain, error) { //Here forma
 }
 
 func moreThan(compare *time.Time, hours int) bool {
-	loc, _ := time.LoadLocation("UTC")
+	loc, err := time.LoadLocation("UTC")
+	if err!=nil {
+		return false
+	}
 	today := time.Now().In(loc)
 	comparator := compare.Add(time.Duration(hours) * time.Hour)
 	if today.Before(comparator) {
@@ -84,13 +86,13 @@ func getDataFromHostAPI(domain string) HostAPI {
 	response, err := http.Get(SSL_LABS_URL + domain)
 
 	if err != nil {
-		log.Fatal(err.Error())
+		return HostAPI{}
 	}
 
 	responseData, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
-		log.Fatal(err)
+		return HostAPI{}
 	}
 
 	var hostAPI HostAPI
@@ -101,7 +103,7 @@ func getDataFromHostAPI(domain string) HostAPI {
 func getCountryAndOwner(domain string) (string,string) {
 	result, err := whois.Whois(domain)
 	if err != nil {
-		log.Fatal(err)
+		return "Error 503","Error 503"
 	}
 	var owner, country string
 	dataOwner := (strings.Split(result, "OrgName:"))
@@ -146,21 +148,29 @@ func getMinorSslGrade(servers []model.Server) string {
 	}
 	found := model.MAX_SSL_GRADE
 	i := model.SSL_GRADE[found]
+	verification := false
 	for _,v := range servers {
 		index := model.SSL_GRADE[v.SslGrade]
+		if index!=0 {
+			verification = true
+		}
 		if index>i {
 			found = v.SslGrade
 			i = index
 		}
 	}
-	return found
+	if verification {
+		return found
+	} else {
+		return model.MIN_SSL_GRADE
+	}
 
 }
 
 func getLogoAndTitle(domain string) (string,string) {
 	s, err := goscraper.Scrape(HTTP+domain, 5)
 	if err != nil {
-		return "", ""
+		return "https://www.redeszone.net/app/uploads/2018/08/error-503-655x318.jpg", err.Error()
 	}
 	return s.Preview.Icon,s.Preview.Title
 }

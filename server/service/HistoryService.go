@@ -3,8 +3,10 @@ package service
 import (
 	"database/sql"
 	_ "github.com/lib/pq"
+	"reflect"
 
 	repository "../repository"
+	errors "../errors"
 	model "../model"
 )
 
@@ -18,7 +20,13 @@ func FetchHistory(db *sql.DB) (*model.History,error) { //Here formatted to just 
 	historyRepository := repository.NewHistoryRepository(db)
 	items, err := historyRepository.FetchHistory()
 	if err != nil {
-		return &model.History{Error: model.Error{Type:"-", Message:err.Error(), Code:"-"}}, err
+		e := []interface{}{err, &errors.QueryError{}}
+		tmp := reflect.TypeOf(e[0])
+		tmp2 := reflect.TypeOf(e[1])
+		if tmp==tmp2 {
+			return &model.History{Error: model.Error{Type:"Service Unavailable", Message:err.Error(), Code:"503"}}, err
+		}
+		return &model.History{Error: model.Error{Type:"Internal Server Error", Message:err.Error(), Code:"500"}}, err
 	}
 	var formattedItems []string
 	for _,v := range items {
