@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/valyala/fasthttp"
 	"encoding/json"
-	service "./service"
+	service "github.com/kliver98/api_for_domains/server/service"
 )
 
 func Index(ctx *fasthttp.RequestCtx) {

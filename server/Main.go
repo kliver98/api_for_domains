@@ -8,7 +8,7 @@ import (
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
 
-	database "./database"
+	database "github.com/kliver98/api_for_domains/server/database"
 
 )
 

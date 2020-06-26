@@ -3,8 +3,8 @@ package database
 import (
 	"database/sql"
 
-	database "../database"
-	errors "../errors"
+	database "github.com/kliver98/api_for_domains/server/database"
+	errors "github.com/kliver98/api_for_domains/server/errors"
 )
 
 var DOMAIN_TABLE string = "domain"

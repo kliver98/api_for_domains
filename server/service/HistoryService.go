@@ -5,9 +5,9 @@ import (
 	_ "github.com/lib/pq"
 	"reflect"
 
-	repository "../repository"
-	errors "../errors"
-	model "../model"
+	repository "github.com/kliver98/api_for_domains/server/repository"
+	errors "github.com/kliver98/api_for_domains/server/errors"
+	model "github.com/kliver98/api_for_domains/server/model"
 )
 
 type IHistoryService interface {

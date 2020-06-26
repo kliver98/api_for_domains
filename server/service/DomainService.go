@@ -12,8 +12,8 @@ import (
 	"github.com/badoux/goscraper"
 	"github.com/likexian/whois-go"
 
-	model "../model"
-	repository "../repository"
+	model "github.com/kliver98/api_for_domains/server/model"
+	repository "github.com/kliver98/api_for_domains/server/repository"
 )
 
 const SSL_LABS_URL = "https://api.ssllabs.com/api/v3/analyze?host="
