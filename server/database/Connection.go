@@ -18,7 +18,7 @@ func GetConnection() (*sql.DB, error) {
 	// Connect to the "reto_prueba" database.
     db, err := sql.Open("postgres", SQL)
 
-    if isDown(PING_DATABASE) {
+    if IsDown() {
     	err = &errors.NoPingError{Message: "Unreachable to database "+PING_DATABASE}
     }
 
@@ -26,12 +26,12 @@ func GetConnection() (*sql.DB, error) {
 
 }
 
-func isDown(domain string) bool {
-	timeout := time.Duration(1 * time.Second)
+func IsDown() bool {
+	timeout := time.Duration(400 * time.Millisecond)
 	client := http.Client{
 	    Timeout: timeout,
 	}
-	_, err := client.Get(domain)
+	_, err := client.Get(PING_DATABASE)
 	if err != nil {
 	    return true
 	} else {

@@ -25,6 +25,9 @@ func NewDomainRepository(db *sql.DB) DomainRepository {
 }
 
 func (r DomainRepository) CreateDomain(domain string, sslGrade string, previousSslGrade string) error {
+	if database.IsDown() {
+		return &errors.NoPingError{Message: "Unreachable to database "+database.PING_DATABASE}
+	}
 	var d database.DomainDB
 	d.Name = domain
 	d.SslGrade = sslGrade
@@ -39,6 +42,9 @@ func (r DomainRepository) CreateDomain(domain string, sslGrade string, previousS
 }
 
 func (r DomainRepository) FetchDomain(domain string) ([]database.DomainDB, error) {
+	if database.IsDown() {
+		return *&[]database.DomainDB{}, &errors.NoPingError{Message: "Unreachable to database "+database.PING_DATABASE}
+	}
 	sqlStm := `SELECT * FROM `+DOMAIN_TABLE+` WHERE name='`+domain+`'`
 	rows, err := r.db.Query(sqlStm)
 	if err != nil {
@@ -60,6 +66,9 @@ func (r DomainRepository) FetchDomain(domain string) ([]database.DomainDB, error
 }
 
 func (r DomainRepository) UpdateDomain(domain string, sslGrade string, previousSslGrade string) error {
+	if database.IsDown() {
+		return &errors.NoPingError{Message: "Unreachable to database "+database.PING_DATABASE}
+	}
 	var d database.DomainDB
 	d.Name = domain
 	d.SslGrade = sslGrade

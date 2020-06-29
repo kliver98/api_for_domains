@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"io/ioutil"
 	"time"
+	"sync"
 	"strings"
 	"strconv"
 	"encoding/json"
@@ -41,10 +42,13 @@ func FetchDomain(db *sql.DB, domain string) (model.Domain, error) { //Here forma
 	//Looks if the domain already exits, if not domainDB will be nil
 	domainsDB,_ := domainRepository.FetchDomain(domain) //domainDb its array class of database -> []DomainDB
 	var domainModel model.Domain
-	servers := getServers(domain)
+	isDown := ""
+	logo, title := "",""
+	var servers []model.Server
+	isDown = strconv.FormatBool(isDownFunc(domain))
+	logo, title = getLogoAndTitle(domain)
+	servers = getServers(domain)
 	sslGrade := getMinorSslGrade(servers)
-	isDown := strconv.FormatBool(isDown(domain))
-	logo, title := getLogoAndTitle(domain)
 	if len(domainsDB)==0 { //No exist domain stored into database, not searched before
 		domainModel.ServersChanged = strconv.FormatBool(false)
 		domainModel.PreviousSslGrade = sslGrade
@@ -130,15 +134,21 @@ func getCountryAndOwner(domain string) (string,string) {
 func getServers(domain string) []model.Server {
 	endpoints := getDataFromHostAPI(domain).Endpoints
 	var servers []model.Server
+	var wg sync.WaitGroup
+	wg.Add(len(endpoints))
 	for _,v := range endpoints {
 		var server model.Server
 		server.Address = v.IpAddress
 		server.SslGrade = v.Grade
-		country,owner := getCountryAndOwner(v.IpAddress)
-		server.Country = country
-		server.Owner = owner
-		servers = append(servers, server)
+		go func() {
+			country,owner := getCountryAndOwner(server.Address)
+			server.Country = country
+			server.Owner = owner
+			servers = append(servers, server)
+			defer wg.Done()
+		}()
 	}
+	wg.Wait()
 	return servers
 }
 
@@ -150,8 +160,8 @@ func getMinorSslGrade(servers []model.Server) string {
 	i := model.SSL_GRADE[found]
 	verification := false
 	for _,v := range servers {
-		index := model.SSL_GRADE[v.SslGrade]
-		if index!=0 {
+		index, ok := model.SSL_GRADE[v.SslGrade]
+		if ok {
 			verification = true
 		}
 		if index>i {
@@ -175,8 +185,8 @@ func getLogoAndTitle(domain string) (string,string) {
 	return s.Preview.Icon,s.Preview.Title
 }
 
-func isDown(domain string) bool {
-	_, err := http.Get(HTTP+domain)
+func isDownFunc(domain string) bool {
+	_, err := http.Get("http://"+domain)
 	if err != nil {
 	    return true
 	} else {

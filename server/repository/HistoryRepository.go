@@ -24,6 +24,9 @@ func NewHistoryRepository(db *sql.DB) historyRepository {
 }
 
 func (r historyRepository) CreateHistory(newDomain string) error {
+	if database.IsDown() {
+		return &errors.NoPingError{Message: "Unreachable to database "+database.PING_DATABASE}
+	}
 	sqlStm := `INSERT INTO `+HISTORY_TABLE+` (domain, searched_at) 
 	VALUES ($1, NOW())`
 	_, err := r.db.Exec(sqlStm, newDomain)
@@ -34,6 +37,9 @@ func (r historyRepository) CreateHistory(newDomain string) error {
 }
 
 func (r historyRepository) FetchHistory() ([]database.HistoryDB, error) {
+	if database.IsDown() {
+		return nil, &errors.NoPingError{Message: "Unreachable to database "+database.PING_DATABASE}
+	}
 	sqlStm := `SELECT * FROM `+HISTORY_TABLE
 	rows, err := r.db.Query(sqlStm)
 

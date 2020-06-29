@@ -30,4 +30,8 @@ SSL GRADES - https://qualys-secure.force.com/discussions/s/article/000005828 ("A
 https://godoc.org/github.com/brimstone/golang-whois
 https://developer.mozilla.org/es/docs/Web/HTTP/Status
 
-react y redux -> proyecto
+Ver cuanto demora json.Marshal
+Pruebas de paginas que no existen
+verificar si vienen con http://
+
+Trabajar en app movil
