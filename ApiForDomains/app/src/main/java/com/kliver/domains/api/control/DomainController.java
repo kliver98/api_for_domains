@@ -1,8 +1,10 @@
 package com.kliver.domains.api.control;
 
 import android.content.Context;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -32,6 +34,21 @@ public class DomainController implements View.OnClickListener, HTTPSWebUtil.OnRe
         initializeFileds();
 
         activity.getBackArrowIV().setOnClickListener(this);
+        activity.getSearchBarET().setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int keyCode, KeyEvent event) {
+                if ((keyCode == KeyEvent.KEYCODE_ENTER) || (keyCode == KeyEvent.KEYCODE_CALL)) {
+                    //Hide the keyboard
+                    InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    //Search on API and put info
+                    initializeFileds();
+                    return true;
+                }
+                return false;
+            }
+        });
         activity.getSearchImgIV().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,6 +68,9 @@ public class DomainController implements View.OnClickListener, HTTPSWebUtil.OnRe
         if (domain.trim().equals(""))
             return;
 
+        String tmp[] = domain.split("http://");
+        tmp = tmp.length<2 ? domain.split("https://"):tmp;
+        domain = tmp.length>1 ? tmp[1]:tmp[0];
         activity.getSearchBarET().setText(domain);
         String url = Constants.URL_DOMAIN+domain;
 
@@ -63,7 +83,7 @@ public class DomainController implements View.OnClickListener, HTTPSWebUtil.OnRe
         try {
             t.join();
         } catch (InterruptedException e) {
-            Toast.makeText(activity,Constants.GENERAL_ERROR,Toast.LENGTH_LONG).show();
+            Toast.makeText(activity,Constants.GENERAL_ERROR+" : "+e.getMessage(),Toast.LENGTH_LONG).show();
         }
     }
 

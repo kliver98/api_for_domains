@@ -32,3 +32,8 @@
 <br><br>The server port it's found in Main.go file or in the console when server it's runnig<br>
 
  > go run Main.go Handler.go
+
+## Steps to install android apk:
+
+In the folder ApiForDomains there's a file called App_V1_0.apk<br>That build apk has the ip of my localhost so must not work, you have to change it and re-build apk.
+<br>To edit and re-build you need Android Studio to open the project and change the IP, it's on Constants on the folder util.<br>

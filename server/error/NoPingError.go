@@ -1,4 +1,4 @@
-package errors
+package error
 
 type NoPingError struct {
 	Message string

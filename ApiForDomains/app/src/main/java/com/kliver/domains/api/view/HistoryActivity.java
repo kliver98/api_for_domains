@@ -58,6 +58,7 @@ public class HistoryActivity extends AppCompatActivity {
         Intent i = new Intent(this,DomainActivity.class);
         i.putExtra(Constants.DOMAIN_VAR_INTENT,domain);
         this.startActivity(i);
+        this.finish();
     }
 
     @Override

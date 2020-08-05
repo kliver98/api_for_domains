@@ -4,15 +4,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
+
 import com.kliver.domains.api.R;
 import com.kliver.domains.api.control.MainController;
-import com.kliver.domains.api.util.Constants;
 
 public class MainActivity extends AppCompatActivity {
 
     private MainController controller;
     private Button btnDomain;
     private Button btnHistory;
+    private TextView versionTV;
+    private TextView serverTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         btnDomain = findViewById(R.id.btnDomain);
         btnHistory = findViewById(R.id.btnHistory);
+        versionTV = findViewById(R.id.versionTV);
+        serverTV = findViewById(R.id.serverTV);
 
         controller = new MainController(this);
     }
@@ -42,4 +47,11 @@ public class MainActivity extends AppCompatActivity {
         return btnHistory;
     }
 
+    public TextView getVersionTV() {
+        return versionTV;
+    }
+
+    public TextView getServerTV() {
+        return serverTV;
+    }
 }

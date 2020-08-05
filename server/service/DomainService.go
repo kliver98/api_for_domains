@@ -15,6 +15,7 @@ import (
 
 	model "github.com/kliver98/api_for_domains/server/model"
 	repository "github.com/kliver98/api_for_domains/server/repository"
+	errors "github.com/kliver98/api_for_domains/server/error"
 )
 
 const SSL_LABS_URL = "https://api.ssllabs.com/api/v3/analyze?host="
@@ -48,6 +49,9 @@ func FetchDomain(db *sql.DB, domain string) (model.Domain, error) { //Here forma
 	isDown = strconv.FormatBool(isDownFunc(domain))
 	logo, title = getLogoAndTitle(domain)
 	servers = getServers(domain)
+	if len(servers)==0 { //If there's no servers, a error ocurrur
+		return domainModel, &errors.ExecError{Message: err.Error()+" \n Execution error "+sqlStm+":"+domain+","+sslGrade+","+previousSslGrade}
+	}
 	sslGrade := getMinorSslGrade(servers)
 	if len(domainsDB)==0 { //No exist domain stored into database, not searched before
 		domainModel.ServersChanged = strconv.FormatBool(false)

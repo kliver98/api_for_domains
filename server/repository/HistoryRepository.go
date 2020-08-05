@@ -4,7 +4,7 @@ import (
 	"database/sql"
 
 	database "github.com/kliver98/api_for_domains/server/database"
-	errors "github.com/kliver98/api_for_domains/server/errors"
+	errors "github.com/kliver98/api_for_domains/server/error"
 )
 
 var HISTORY_TABLE string = "history"

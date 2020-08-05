@@ -19,6 +19,8 @@ public class MainController implements View.OnClickListener, HTTPSWebUtil.OnResp
 
         activity.getBtnDomain().setOnClickListener(this);
         activity.getBtnHistory().setOnClickListener(this);
+        activity.getServerTV().setText(activity.getServerTV().getText()+Constants.LOCALHOST);
+        activity.getVersionTV().setText(activity.getVersionTV().getText()+Constants.APP_VERSION);
     }
 
     @Override

@@ -1,6 +1,10 @@
 package com.kliver.domains.api.util;
 
+import com.kliver.domains.api.BuildConfig;
+
 public class Constants {
+
+    public static final String APP_VERSION = BuildConfig.VERSION_NAME;;
 
     public static final int PING_CALLBACK = 0;
     public static final int DOMAIN_CALLBACK = 1;
@@ -9,7 +13,7 @@ public class Constants {
     public static final String CONNECTION_TIMEOUT_RESPONSE = "Connection Timeout - "+TIMEOUT_HTTP_URL_CONNECTION+" ms";
 
     public static final String PORT = "8082";
-    public static final String LOCALHOST = "http://192.168.1.5";
+    public static final String LOCALHOST = "http://192.168.0.22";
     public static final String API_BASE = "/api/v1/";
     public static final String GET_DOMAIN = API_BASE+"domain=";
     public static final String GET_HISTORY = API_BASE+"history";

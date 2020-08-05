@@ -6,7 +6,7 @@ import (
     "time"
 
     _ "github.com/lib/pq"
-    errors "github.com/kliver98/api_for_domains/server/errors"
+    errors "github.com/kliver98/api_for_domains/server/error"
 )
 
 const SQL string = "postgresql://root@localhost:26257/reto_prueba?sslmode=disable"

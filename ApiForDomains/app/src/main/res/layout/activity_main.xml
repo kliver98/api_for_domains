@@ -61,4 +61,25 @@
         android:text="Ver Historial"
         android:textSize="18sp" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginRight="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/versionTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="version: " />
+
+        <TextView
+            android:id="@+id/serverTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ip server: " />
+    </LinearLayout>
+
 </LinearLayout>

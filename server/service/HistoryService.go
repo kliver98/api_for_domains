@@ -6,7 +6,7 @@ import (
 	"reflect"
 
 	repository "github.com/kliver98/api_for_domains/server/repository"
-	errors "github.com/kliver98/api_for_domains/server/errors"
+	errors "github.com/kliver98/api_for_domains/server/error"
 	model "github.com/kliver98/api_for_domains/server/model"
 )
 

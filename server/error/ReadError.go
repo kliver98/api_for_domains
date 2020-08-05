@@ -1,4 +1,4 @@
-package errors
+package error
 
 type ReadError struct {
 	Message string

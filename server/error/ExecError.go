@@ -1,4 +1,4 @@
-package errors
+package error
 
 type ExecError struct {
 	Message string
